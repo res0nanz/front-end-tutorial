@@ -26,12 +26,16 @@ class Board extends React.Component {
   }
 
   handleClick(i) {
-    // copy
+    // copyを作り、copyを変更。setStateにて反映
+    // this.state.squaresを直接変更しないで済む
+    // this.stateもイミュータブル扱いにできる（しなくてはいけない）
     const squares = this.state.squares.slice();
-    // copyを変更
     squares[i] = 'X';
     // 反映
     this.setState({ squares: squares });
+    // setStateでないとre-renderされない
+    // ESLint Warningが出る
+    // this.state.squares[i] = 'X';
   }
 
   renderSquare(i) {
