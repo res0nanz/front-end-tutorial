@@ -12,7 +12,7 @@ function Square(props) {
       // 各SquareがBoardのhandleClickを参照
       onClick={props.onClick}
     >
-      { this.props.value }
+      { props.value }
     </button>
   );
 }
