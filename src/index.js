@@ -2,19 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Square extends React.Component {
-  render() {
-    return (
-      <button
-        className="square"
-        // this.props.onClick=BoardからonClickとして渡されたモノ=BoardのhandleClick
-        // 各SquareがBoardのhandleClickを参照
-        onClick={() => this.props.onClick()}
-      >
-        { this.props.value }
-      </button>
-    );
-  }
+function Square(props) {
+  return (
+    <button
+      className="square"
+      // buttonのonClickで実行されるモノ
+      // =BoardからonClickとして渡されたモノ
+      // =props.onClick =BoardのhandleClick
+      // 各SquareがBoardのhandleClickを参照
+      onClick={props.onClick}
+    >
+      { this.props.value }
+    </button>
+  );
 }
 
 class Board extends React.Component {
