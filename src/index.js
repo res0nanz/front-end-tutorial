@@ -31,6 +31,10 @@ class Board extends React.Component {
     // this.state.squaresを直接変更しないで済む
     // this.stateもイミュータブル扱いにできる（しなくてはいけない）
     const squares = this.state.squares.slice();
+    // すでにマスが埋まっているor勝敗が決まっているか
+    if (calculateWinner(squares) || squares[i]) {
+        return;
+    }
     squares[i] =  this.state.xIsNext ? 'X': 'O';
     // 反映
     this.setState({
@@ -52,7 +56,13 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    const winner = calculateWinner(this.state.squares);
+    let status;
+    if (winner) {
+        status = 'Winner: ' + winner;
+    } else {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
 
     return (
       <div>
@@ -100,3 +110,27 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+function calculateWinner(squares) {
+  // 勝利パターン
+  const lines = [
+   // 横
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    // 縦
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    // 斜め
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      // パターンが同じマークで埋まっているか=勝利が決まっているか
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+          return squares[a];
+      }
+  }
+  return null;
+}
