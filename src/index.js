@@ -17,56 +17,22 @@ function Square(props) {
   );
 }
 
+// renderとrenderSquareに専念することができた
 class Board extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    }
-  }
-
-  handleClick(i) {
-    // copyを作り、copyを変更。setStateにて反映
-    // this.state.squaresを直接変更しないで済む
-    // this.stateもイミュータブル扱いにできる（しなくてはいけない）
-    const squares = this.state.squares.slice();
-    // すでにマスが埋まっているor勝敗が決まっているか
-    if (calculateWinner(squares) || squares[i]) {
-        return;
-    }
-    squares[i] =  this.state.xIsNext ? 'X': 'O';
-    // 反映
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
-    // setStateでないとre-renderされない
-    // ESLint Warningが出る
-    // this.state.squares[i] = 'X';
-  }
-
   renderSquare(i) {
     return (
       <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
+        // props -> squaresをGameから受け取る
+        value={this.props.squares[i]}
+        // 親のGameがhandleClickを持つため、変更
+        onClick={() => this.props.onClick(i)}
       />
     );
   }
 
   render() {
-    const winner = calculateWinner(this.state.squares);
-    let status;
-    if (winner) {
-        status = 'Winner: ' + winner;
-    } else {
-        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -88,14 +54,64 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  // Board -> Game より高層へ
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 過去の操作をすべて記憶する
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+      xIsNext: true,
+    };
+  }
+
+  // Boardより移動
+  handleClick(i) {
+    const history = this.state.history;
+    const current = history[history.length - 1];
+    // copyを作り、copyを変更。setStateにて反映
+    // squaresを直接変更しないで済む
+    const squares = current.squares.slice();
+    // すでにマスが埋まっているor勝敗が決まっているか
+    if (calculateWinner(squares) || squares[i]) {
+        return;
+    }
+    squares[i] =  this.state.xIsNext ? 'X': 'O';
+    // 反映
+    this.setState({
+      // pushを使わずconcat（連結）を使う
+      // pushは破壊的。historyの参照先まで変わってしまう
+      history: history.concat([{
+        squares: squares,
+      }]),
+      xIsNext: !this.state.xIsNext,
+    });
+    // setStateでないとre-renderされない
+    // ESLint Warningが出る
+    // this.state.squares[i] = 'X';
+  }
+
   render() {
+    const history = this.state.history;
+    const current = history[history.length - 1];
+    const winner = calculateWinner(current.squares);
+    let status;
+    if (winner) {
+        status = 'Winner: ' + winner;
+    } else {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board
+            squares={current.squares}
+            onClick={(i) => this.handleClick(i)}
+          />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
+          <div>{status}</div>
           <ol>{/* TODO */}</ol>
         </div>
       </div>
