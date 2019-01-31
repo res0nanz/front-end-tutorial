@@ -103,7 +103,9 @@ class Game extends React.Component {
       const desc = move ? 'Go to move #' + move : 'Go to game start';
       return (
         // ボタン。Arrayからlistをつくる=>keyが必要
-        <li>
+        // keyにArrayのindexを使うことはオススメしない。変更、削除等がしにくいため（しなければ使っても良い）
+        // keyはグローバルにユニークである必要はない。componet内と兄弟関係にあるcomponetsでユニーク
+        <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
         </li>
       );
