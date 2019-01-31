@@ -62,13 +62,17 @@ class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null),
       }],
+      // ターン数
+      stepNumber: 0,
+      // ターンにプレイヤーはXか（Oでないか）
       xIsNext: true,
     };
   }
 
   // Boardより移動
   handleClick(i) {
-    const history = this.state.history;
+    // 上限を定めることで、未来のhistoryというバグを起こさない
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     // copyを作り、copyを変更。setStateにて反映
     // squaresを直接変更しないで済む
@@ -85,6 +89,7 @@ class Game extends React.Component {
       history: history.concat([{
         squares: squares,
       }]),
+      stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
     // setStateでないとre-renderされない
@@ -92,9 +97,18 @@ class Game extends React.Component {
     // this.state.squares[i] = 'X';
   }
 
+  jumpTo(step) {
+    this.setState({
+      // 遡る
+      stepNumber: step,
+      // stepからターンを計算しなおす
+      xIsNext: (step % 2) === 0,
+    });
+  }
+
   render() {
     const history = this.state.history;
-    const current = history[history.length - 1];
+    const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
     // histroyからstepとmoveに分け、処理
