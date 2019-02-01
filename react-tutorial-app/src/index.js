@@ -61,6 +61,8 @@ class Game extends React.Component {
       // 過去の操作をすべて記憶する
       history: [{
         squares: Array(9).fill(null),
+        // 追加課題1
+        location: [],
       }],
       // ターン数
       stepNumber: 0,
@@ -81,6 +83,7 @@ class Game extends React.Component {
     if (calculateWinner(squares) || squares[i]) {
         return;
     }
+    // マスを埋める
     squares[i] =  this.state.xIsNext ? 'X': 'O';
     // 反映
     this.setState({
@@ -88,6 +91,8 @@ class Game extends React.Component {
       // pushは破壊的。historyの参照先まで変わってしまう
       history: history.concat([{
         squares: squares,
+        // y（整数）, x
+        location: [i / 3 | 0, i % 3],
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -111,16 +116,21 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    // histroyからstepとmoveに分け、処理
+    // histroyから処理 -> movesとして所持
+    // mapメソッドの引数=要素,インデックス,配列オブジェクト
     const moves = history.map((step, move) => {
       // moveから文を生成
       const desc = move ? 'Go to move #' + move : 'Go to game start';
+      // step.locationから文を生成
+      const location = step.location
+      const location_sentence = location.length > 0 ? `Y:${location[0]}, X:${location[1]}` : '';
       return (
         // ボタン。Arrayからlistをつくる=>keyが必要
         // keyにArrayのindexを使うことはオススメしない。変更、削除等がしにくいため（しなければ使っても良い）
         // keyはグローバルにユニークである必要はない。componet内と兄弟関係にあるcomponetsでユニーク
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <p>{location_sentence}</p>
         </li>
       );
     });
