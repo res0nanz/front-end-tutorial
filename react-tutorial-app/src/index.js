@@ -128,8 +128,11 @@ class Game extends React.Component {
         // ボタン。Arrayからlistをつくる=>keyが必要
         // keyにArrayのindexを使うことはオススメしない。変更、削除等がしにくいため（しなければ使っても良い）
         // keyはグローバルにユニークである必要はない。componet内と兄弟関係にあるcomponetsでユニーク
+        // オプション課題2
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => this.jumpTo(move)}>
+            {current === step ? <b>{desc}</b> : desc}
+          </button>
           <p>{location_sentence}</p>
         </li>
       );
