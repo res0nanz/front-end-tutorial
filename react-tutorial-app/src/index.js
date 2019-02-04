@@ -69,6 +69,8 @@ class Game extends React.Component {
       stepNumber: 0,
       // ターンにプレイヤーはXか（Oでないか）
       xIsNext: true,
+      // オプション課題 昇順か（降順か）
+      isAscendingOrder: true,
     };
   }
 
@@ -82,17 +84,17 @@ class Game extends React.Component {
     const squares = current.squares.slice();
     // すでにマスが埋まっているor勝敗が決まっているか
     if (calculateWinner(squares) || squares[i]) {
-        return;
+      return;
     }
     // マスを埋める
-    squares[i] =  this.state.xIsNext ? 'X': 'O';
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
     // 反映
     this.setState({
       // pushを使わずconcat（連結）を使う
       // pushは破壊的。historyの参照先まで変わってしまう
       history: history.concat([{
         squares: squares,
-        // y（整数）, x
+        // オプション課題 y（整数）, x
         location: [i / 3 | 0, i % 3],
       }]),
       stepNumber: history.length,
@@ -101,6 +103,13 @@ class Game extends React.Component {
     // setStateでないとre-renderされない
     // ESLint Warningが出る
     // this.state.squares[i] = 'X';
+  }
+
+  // オプション課題
+  switchOrder(prevState) {
+    this.setState({
+      isAscendingOrder: !prevState.isAscendingOrder,
+    });
   }
 
   jumpTo(step) {
@@ -155,8 +164,19 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
+          {/*
+          　下の書き方では、再描画がされない（変化を検知できない）
+            const宣言のためmovesに再代入することもできない（すべきない。setStateを使う）
+            <button onClick={() => { moves.reverse() }}>Chane Order /<button>
+            setStateを使う関数を呼び出す。関数には、現在のstateを渡すようにする。下記参照
+            https://reactjs.org/docs/state-and-lifecycle.html#state-updates-may-be-asynchronou
+          */}
+          <button onClick={() => { this.switchOrder(this.state) }}>
+            {this.state.isAscendingOrder ? 'Change to descending' : 'Change to ascending'}
+          </button>
           <div>{status}</div>
-          <ol>{moves}</ol>
+          {/*下は再描画ではなく、条件に合う方を描画しているにすぎない。1度の描画なのでうまくいく*/}
+          <ol>{this.state.isAscendingOrder ? moves : moves.reverse()}</ol>
         </div>
       </div>
     );
