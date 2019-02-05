@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props) {
+  const hightLightStyle = {
+    backgroundColor: 'yellow'
+  }
+  const normalStyle = {
+    backgroundColor: 'white'
+  }
   return (
     <button
       className="square"
@@ -11,6 +17,8 @@ function Square(props) {
       // =props.onClick =BoardのhandleClick
       // 各SquareがBoardのhandleClickを参照
       onClick={props.onClick}
+      // ハイライト
+      style={props.hasHightLight ? hightLightStyle : normalStyle }
     >
       { props.value }
     </button>
@@ -19,13 +27,15 @@ function Square(props) {
 
 // renderとrenderSquareに専念することができた
 class Board extends React.Component {
-  renderSquare(i) {
+  renderSquare(i, hasHightLight) {
     return (
       <Square
         // props -> squaresをGameから受け取る
         value={this.props.squares[i]}
         // 親のGameがhandleClickを持つため、変更
         onClick={() => this.props.onClick(i)}
+        // ハイライトさせるSquareか
+        hasHightLight={hasHightLight ? hasHightLight.includes(i) : false}
       />
     );
   }
@@ -37,7 +47,7 @@ class Board extends React.Component {
       const render_squares = [];
       for (let j = 0; j < COLUMNS_PER_ROW; j++) {
         render_squares.push(
-          this.renderSquare(COLUMNS_PER_ROW*i+j)
+          this.renderSquare(COLUMNS_PER_ROW*i+j, this.props.hasHightLight)
         )
       }
       render_items.push(
@@ -124,7 +134,10 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    // 勝利したライン
+    const winLine = calculateWinner(current.squares);
+    // 勝利した側（O or X）
+    const winner = winLine ? winLine[0] : null
 
     // histroyから処理 -> movesとして所持
     // mapメソッドの引数=要素,インデックス,配列オブジェクト
@@ -133,7 +146,7 @@ class Game extends React.Component {
       const desc = move ? 'Go to move #' + move : 'Go to game start';
       // step.locationから文を生成
       const location = step.location
-      const location_sentence = location.length > 0 ? `Y:${location[0]}, X:${location[1]}` : '';
+      const locationSentence = location.length > 0 ? `Y:${location[0]}, X:${location[1]}` : '';
       return (
         // ボタン。Arrayからlistをつくる=>keyが必要
         // keyにArrayのindexを使うことはオススメしない。変更、削除等がしにくいため（しなければ使っても良い）
@@ -143,7 +156,7 @@ class Game extends React.Component {
           <button onClick={() => this.jumpTo(move)}>
             {current === step ? <b>{desc}</b> : desc}
           </button>
-          <p>{location_sentence}</p>
+          <p>{locationSentence}</p>
         </li>
       );
     });
@@ -161,6 +174,7 @@ class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
+            hasHightLight={winLine}
           />
         </div>
         <div className="game-info">
@@ -209,7 +223,8 @@ function calculateWinner(squares) {
       const [a, b, c] = lines[i];
       // パターンが同じマークで埋まっているか=勝利が決まっているか
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-          return squares[a];
+        // 勝利ライン
+        return lines[i];
       }
   }
   return null;
