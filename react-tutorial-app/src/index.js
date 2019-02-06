@@ -137,7 +137,8 @@ class Game extends React.Component {
     // 勝利したライン
     const winLine = calculateWinner(current.squares);
     // 勝利した側（O or X）
-    const winner = winLine ? winLine[0] : null
+    const winner = winLine ? current.squares[winLine[0]] : null
+    // console.log(winner)
 
     // histroyから処理 -> movesとして所持
     // mapメソッドの引数=要素,インデックス,配列オブジェクト
@@ -164,6 +165,8 @@ class Game extends React.Component {
     let status;
     if (winner) {
         status = 'Winner: ' + winner;
+    } else if (!winner && this.state.stepNumber >= current.squares.length) {
+        status = 'Draw';
     } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
