@@ -11,3 +11,5 @@ Reactに関連するライブラリを学ぶリポジトリ
 ## Tutorials
 
 * [Tutorial: Intro to React – React](https://reactjs.org/tutorial/tutorial.html)
+* [Basic Tutorial: Intro · Redux](https://redux.js.org/basics/basic-tutorial)
+
