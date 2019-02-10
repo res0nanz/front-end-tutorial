@@ -175,3 +175,26 @@ function todoApp(state = {}, action) {
   }
 ```
 
+## Store
+
+* Acctionsはwhat happendを代表するもの
+* ReducersはActionに基づいてstateを更新（させるルールを示す）
+* Storeは1つアプリケーションに1つ
+  * Reducers compositionを利用することで1つに限定する
+* ReducerからStoreを簡単に生成できる
+  * 第二引数に初期状態を渡すこともできる
+
+```javascript
+import { createStore } from 'redux'
+// Reducers composition
+import todoApp from './reducers'
+// 生成
+const store = createStore(todoApp)
+```
+
+* `getState()`でアクセスを許可
+* `dispatch(action)`で更新
+* `subscribe(listener)`でリスナーを登録
+* `subscribe(listener)`から返される関数（を呼び出して）リスナーの登録を解除
+* なんのUIもなくともconsole.logで確認できる
+  * UIを考える前にStore, Actions, Reducersで確認、テスト
