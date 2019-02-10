@@ -198,3 +198,41 @@ const store = createStore(todoApp)
 * `subscribe(listener)`から返される関数（を呼び出して）リスナーの登録を解除
 * なんのUIもなくともconsole.logで確認できる
   * UIを考える前にStore, Actions, Reducersで確認、テスト
+
+## Data Flow
+
+* Reduxのアーキテクチャは厳しい一方通行
+  * お互いに関与しない構造
+  * 同じようなデータをいくつも作らずに済む
+
+### 1.`store.dispatch(action)`
+
+* Actionは小さなnewsだと考える
+* 以下は、「MaryがNo.42のarticleをlike」や「TodoにRead the Redux docsを追加」を表す
+* どこからでも呼び出せる
+
+```javascript
+ { type: 'LIKE_ARTICLE', articleId: 42 }
+ { type: 'FETCH_USER_SUCCESS', response: { id: 3, name: 'Mary' } }
+ { type: 'ADD_TODO', text: 'Read the Redux docs.' }
+```
+
+### 2.Redux store calls the reducer
+
+* 現在のstateとactionを渡して、次のstateを受け取る
+* reducerは純粋関数（参照透過性が必要）
+
+```javascript
+let nextState = todoApp(previousState, action)
+```
+
+### 3.The root reducer may combine the output of multiple reducers
+
+* combineReducersはreducerの分割に役立つ
+* 結果をまとめるのも勝手にやってくれる
+
+### 4.Store saves the complete state
+
+* このタイミングで`store.subscribe(listener)`で登録されたリスナーが呼び出される
+* リスナーは`store.getState()`で現在の状態を取得できる
+* 画面に反映するには、React Reduxなどを使っていれば`component.setState(newState)`が呼ばれる
