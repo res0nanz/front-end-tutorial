@@ -236,3 +236,132 @@ let nextState = todoApp(previousState, action)
 * このタイミングで`store.subscribe(listener)`で登録されたリスナーが呼び出される
 * リスナーは`store.getState()`で現在の状態を取得できる
 * 画面に反映するには、React Reduxなどを使っていれば`component.setState(newState)`が呼ばれる
+
+## Usage with React
+
+* ReduxはReact以外（Angular, jQuery, pureJSなど）でも使える
+* React, DekuはUIを状態の関数として描画でき相性がいい
+* `npm install --save react-redux`
+
+### Presentational and Container Components
+
+||Presentational|Container|
+|-|-|-|
+|目的|見え方|動き方|
+|Reduxについて|気づかない|気づく|
+|データの読み込み|propsから読み取る|Redux stateを購読する|
+|データの変化|propsからcallbackを呼びだす|Redux actionを送る|
+|書かれ方|手書き|React Reduxによって生成|
+
+* 書くのは、ほぼPresentational
+* Redux storeとの接続にContainerが必要
+* Containerは複雑になりがち
+* そのときは、コンポーネントツリー内にもう1つContainerを
+* なるべくContainerは手書きしない
+* React Reduxの`connect()`に頼るべき
+
+### Designing Component Hierarchy
+
+* UI（state object）の階層・構造設計は[Thinking in React – React](https://reactjs.org/docs/thinking-in-react.html)にて勉強しろ
+
+### Designing Presentational Components
+
+Presentational Componentは見え方しかない。どこから、どのようにしてデータを変化させる、与えられるのか知らない。与えられものをただ見えるにすぎない
+
+* TodoList - Todoリストを表示する
+  * todos:Array - Todoの配列, 中身は {id, text, completed}
+  * onTodoClick(id:number) - callback, Todoをクリックで呼び出される
+* Todo - 1つ1つのTodo
+  * text:string - 表示テキスト
+  * completed:boolean - 完了しているか
+  * onClick() - callback, Todoをクリックで呼び出される
+* Link - callbackが結びついたリンク
+  * onClick() - callback, リンクをクリックで呼び出される
+* Footer - 表示項目を変更する
+* App - root, その他すべて
+
+### Designing Container Components
+
+* VisibleTodoList - Storeを購読して現在のフィルターにより、描画するTodoを選ぶ。TodoListを描画する
+* FilterLink - 現在のフィルターを得て、Linkを描画する。クリックに応じたActionをdispatchする
+  * filter:string - フィルターそのもの
+
+### Designing Other Components
+
+* formと関数が結びついたものなど、PresentationalとContainerを迷うものもある
+* 2つに分けるのはアプリが大きくなってからでも良い
+* AddTodo - 追加ボタンのついたform
+
+### Implementing Presentational Components
+
+* ローカルのstateやライフサイクルメソッドが不要であれば、stateを持たない関数として実装する
+* 関数ではなくClassであってもよい
+* なるべく関数にしておくべき
+
+### Implementing Container Components
+
+* Presentational ComponentをReduxにつなげるために Container Componentが必要
+* `store.subscribe()`で状態ツリーを取得、propsをPresentational Componentに渡す
+* 上を手書きするより、`connect()`を使う
+* `connect()`には`mapStateToProps`という特別な関数が必要
+  * 現在のRedux storeをpropsに変換する
+  * 包括するPresentational Componentに渡すべために
+
+```javascript
+// 現在のstateからPresentational ComponentのTodoListに渡すtodosを求める
+const getVisibleTodos = (todos, filter) => {
+  switch (filter) {
+    case 'SHOW_COMPLETED':
+      return todos.filter(t => t.completed)
+    case 'SHOW_ACTIVE':
+      return todos.filter(t => !t.completed)
+    case 'SHOW_ALL':
+    default:
+      return todos
+  }
+}
+// connectのために用意
+const mapStateToProps = state => {
+  return {
+    todos: getVisibleTodos(state.todos, state.visibilityFilter)
+  }
+}
+```
+
+* `mapDispatchToProps`関数もある
+  * Actionのdispatchが目的
+  * dispatchを受け取り、callbackとなるpropsを返す
+
+```javascript
+const mapDispatchToProps = dispatch => {
+  // propsとして返す
+  return {
+    // TodoList(Presentational Component)のcallbackに対応
+    onTodoClick: id => {
+      // dispatchを設定
+      dispatch(toggleTodo(id))
+    }
+  }
+}
+```
+
+* Container Componentとして`connect()`する
+
+```javascript
+import { connect } from 'react-redux'
+
+const VisibleTodoList = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoList)
+
+export default VisibleTodoList
+```
+
+### Passing the Store
+
+* すべてのComponentsはRedux Storeにアクセスしなければならない
+* Storeを購読する（状態を把握する）ため
+* 全てに対し、Propsとして渡すこともできるが、やるべきでない
+* `<Provider>`という特別なReact ReduxのComponentを使うことで魔法のように解決する
+* root Componentを描画するときに囲うだけでよい
