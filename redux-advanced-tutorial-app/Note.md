@@ -116,3 +116,11 @@ RECEIVE_POSTSはネットワークリクエストに左右されるActionとい�
   }
 }
 ```
+
+### Async Action Creators
+
+* 同期的なActionCreatorsをネットワークリクエストと共に使う（＝非同期）には、redux-thunkのミドルウェアを使う
+* 特別なミドルウェアを使うことで、ActionCreatorsはオブジェクトの代わりに関数を返せるようになる
+  * その関数はredux-thunkによって実行される
+  * その関数は純粋でなくともよく、副作用が許される
+  * その関数はActionをdispatchすることも可能（同期的なAction同様
