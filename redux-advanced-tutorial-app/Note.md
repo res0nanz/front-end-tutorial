@@ -124,3 +124,84 @@ RECEIVE_POSTSはネットワークリクエストに左右されるActionとい�
   * その関数はredux-thunkによって実行される
   * その関数は純粋でなくともよく、副作用が許される
   * その関数はActionをdispatchすることも可能（同期的なAction同様
+
+## Async Flow & Middleware
+
+* Async Flowは特にメモすることもないので省略
+* ミドルウェアは、もっとReact/Reduxに詳しくなってから
+
+## Usage with React Router
+
+* `npm install --save react-router-dom`
+
+### フォールバックURL設定
+
+* フォールバックURL - 404の代わり
+* index.htmlを返す
+* Create React Appを使っていれば設定済み
+* Express設定
+
+```javascript
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'))
+})
+```
+
+* WebpackDevServer設定
+  * webpack.config.dev.jsに追記
+
+```javascript
+devServer: {
+  historyApiFallback: true
+}
+```
+
+### Connecting React Router with Redux App
+
+```javascript
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+```
+
+* `<Router>`で`<Route>`をラップ（包む）する
+  * URLが変化した時、マッチングした`<Route>`で指定されたComponentを描画する
+  * pathでパスを宣言する
+
+```javascript
+const Root = () => (
+  <Router>
+    // url:/ のページにAppコンポーネントを割り当てる
+    <Route path="/" component={App} />
+  </Router>
+)
+```
+
+* `<Provider>`はさらに`<Router>`をラップ（包む）する
+* `filter`パラメータを渡すとき
+
+```javascript
+<Route path="/:filter?" component={App} />
+```
+
+* todosをclone
+* `npm install react-scripts`
+* ./components/Root.jsを作成し./index.jsで読み込むようにする
+
+### Navigating with React Router
+
+* `<Link>`Componentによってアプリのリンクを設定
+  * スタイリングのためのPropsを受け取る`<NavLink>`もある
+  * containersのComponentで設定し、別の関数としてラップ
+  * componentsにて、関数を呼び出すようにして使う
+* ./containers/FilterLink.js
+* ./components/Footer.js
+
+### Reading From the URL
+
+* `mapStateToProps()`からフィルタリングしている
+  * これでは、URLは変化してもフィルタリングが機能しない
+  * URLではなく、状態にバインドされているため
+  * 第二引数`ownProps`を設ける
+  * `path=/:filter?`と書いたため`App`の`params.filter`にURL
+  * その後、`mapStateToProps(state, ownProps)`に`ownProps.filter`をバインドさせる
+  * containers/VisibleTodoList.js
+  * components/App.js
