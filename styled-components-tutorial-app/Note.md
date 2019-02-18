@@ -34,3 +34,27 @@ render(
 
 * 自作したのstyled-componentsを拡張して使う
 * `styled()`にcomponentsを引数として渡すだけ
+* `as` props
+  * `<Button as="a" href="link-url">`とするとaタグの機能（リンク）がつけられる
+  * `as={function}`とすると渡した関数の処理がされる
+
+## Styling any components
+
+* HTML/CSSの`class`を付与する関数
+
+```javascript
+const Link = ({ className, children }) => (
+  <a className={className}>
+    {children}
+  </a>
+);
+```
+
+* 上を拡張してstyleを付与する
+  * `= styled(Link)`
+  * 実際のclassはユニークIDのような状態
+
+## Passed props
+
+* `<Input defaultValue="aaa">`とすると`aaa`が入力された状態が初期状態となる
+* `color: ${props => props.inputColor || "red"};`とすると`inputColor`propによってcolorが変化
