@@ -58,3 +58,35 @@ const Link = ({ className, children }) => (
 
 * `<Input defaultValue="aaa">`とすると`aaa`が入力された状態が初期状態となる
 * `color: ${props => props.inputColor || "red"};`とすると`inputColor`propによってcolorが変化
+
+## Coming from CSS
+
+### How do Styled Components work within a component
+
+* `import styles from './styles.css'`と書いて、CSSを読み込み、`className={styles.button}`としてもよい
+* 上のやり方だとCSSファイルを別に作ることになる
+* これまで同様、機能するReact Componentsであっても、`import styled from 'styled-components'`に頼るべき
+
+### Define Styled Components outside of the render method
+
+* `<Wrapper>`の中で`<StyledWrapper>`が使いたいとき
+* `const Wrapper = {}`の中で`const StyledWrapper`としない
+* 別々に宣言して、`<Wrapper>`の中で`<StyledWrapper>{message}</StyledWrapper>`とすると
+
+### Pseudoelements, pseudoselectors, and nesting
+
+* SCSSのような書き方も可能
+* `&`を用いることで条件分岐が可能
+* `&`をつけずに書くと、子の要素の中から条件に当てはまるものを対象とする
+* 以下のように書くことで`<Thing>`すべてに`color:red`を付与できる
+  * bodyタグのリセットなどで一括変更するときによい
+
+```javascript
+const GlobalStyle = createGlobalStyle`
+  div${Thing} {
+    color: red;
+  }
+`
+```
+
+* `&& { color: blue }`とつけることで、`GlobalStyle`があっても上書きできる

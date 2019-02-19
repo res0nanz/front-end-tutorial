@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import SelectorPatterns from './SelectorPatterns';
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -34,7 +35,7 @@ const ReversedButton = props => <button {...props} children={props.children.spli
 
 // .classを付与する
 const Link = ({ className, children }) => (
-  <a className={className}>
+  <a className={className} href="/">
     {children}
   </a>
 );
@@ -54,7 +55,19 @@ const Input = styled.input`
   border-radius: 3px;
 `;
 
+const StyledCounter = styled.div`
+  /* ... */
+`
+const Paragraph = styled.p`
+  /* ... */
+`
+
 class App extends Component {
+  state = { count: 0 }
+
+  increment = () => this.setState({ count: this.state.count + 1 })
+  decrement = () => this.setState({ count: this.state.count - 1 })
+
   render() {
     return (
       <div className="App">
@@ -73,6 +86,13 @@ class App extends Component {
         <br />
         <Input defaultValue="@probablyup" type="text" />
         <Input defaultValue="@geelen" type="text" inputColor="rebeccapurple" />
+        <br />
+        <StyledCounter>
+          <Paragraph>{this.state.count}</Paragraph>
+          <Button onClick={this.increment}>+</Button>
+          <Button onClick={this.decrement}>-</Button>
+        </StyledCounter>
+        <SelectorPatterns/>
       </div>
     );
   }
