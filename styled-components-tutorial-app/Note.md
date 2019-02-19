@@ -1,5 +1,8 @@
 # styled-components
 
+* v4の話
+* React Nativeでは別途、特別配慮した書き方が求められるので注意
+
 ## Getting Started
 
 * `npm install --save styled-components`
@@ -61,6 +64,8 @@ const Link = ({ className, children }) => (
 
 ## Coming from CSS
 
+* SelectorPatterns.jsを参照
+
 ### How do Styled Components work within a component
 
 * `import styles from './styles.css'`と書いて、CSSを読み込み、`className={styles.button}`としてもよい
@@ -90,3 +95,16 @@ const GlobalStyle = createGlobalStyle`
 ```
 
 * `&& { color: blue }`とつけることで、`GlobalStyle`があっても上書きできる
+
+## Attaching additional props
+
+* `.attrs`とすることで、動的にスタイルを変更することができる
+* Other.jsを参照
+
+## Animations
+
+* `keyframes`を用いることでアニメーションをつけることができる
+* あくまでどのようなアニメーションをするかであって、何秒かなどは別
+* CSSアニメーションに組み込むような感じ
+* v4以降では必ずcss`とする（styled.~でも）
+* Other.jsを参照

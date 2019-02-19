@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import SelectorPatterns from './SelectorPatterns';
+import Other from './Other';
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -92,7 +93,8 @@ class App extends Component {
           <Button onClick={this.increment}>+</Button>
           <Button onClick={this.decrement}>-</Button>
         </StyledCounter>
-        <SelectorPatterns/>
+        <SelectorPatterns />
+        <Other />
       </div>
     );
   }
