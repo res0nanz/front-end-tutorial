@@ -12,4 +12,6 @@ Reactに関連するライブラリを学ぶリポジトリ
 
 * [Tutorial: Intro to React – React](https://reactjs.org/tutorial/tutorial.html)
 * [Basic Tutorial: Intro · Redux](https://redux.js.org/basics/basic-tutorial)
-
+* [Advanced Tutorial: Intro · Redux](https://redux.js.org/advanced/advanced-tutorial)
+* [styled-components: Basics](https://www.styled-components.com/docs/basics)
+* [styled-components: Advanced Usage](https://www.styled-components.com/docs/advanced)
