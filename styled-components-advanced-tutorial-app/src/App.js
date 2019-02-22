@@ -53,7 +53,7 @@ class App extends Component {
         <ThemeProvider theme={theme}>
           <Button>Themed</Button>
         </ThemeProvider>
-        <br />
+        <hr />
         <ThemeProvider theme={theme2}>
           <div>
             <Button2>Default Theme</Button2>
@@ -62,7 +62,18 @@ class App extends Component {
               <Button2>Inverted Theme</Button2>
             </ThemeProvider>
           </div>
-        </ThemeProvider>
+          </ThemeProvider>
+        <hr />
+        <div>
+          { /* 直接渡すことも可能 */ }
+          <Button theme={{ main: "royalblue" }}>Ad hoc theme</Button>
+          <ThemeProvider theme={theme}>
+            <div>
+              <Button>Themed</Button>
+              <Button theme={{ main: "darkorange" }}>Overidden</Button>
+            </div>
+          </ThemeProvider>
+        </div>
       </div>
     );
   }

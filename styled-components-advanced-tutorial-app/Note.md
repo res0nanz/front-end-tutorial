@@ -5,6 +5,7 @@
 * `<ThemeProvider>`でラップしたらラップされたcomponentsのpropsに`<ThemeProvider>`の引数を渡す
 * `<ThemeProvider theme={main: "red"}>`であれば、`props.theme.main`
 * `<ThemeProvider>`でラップするのは単一components
+* ラップ内全体にprops.theme.xxxを渡すことができる=まとめてスタイリングができる
 
 ### Function themes
 
@@ -25,3 +26,9 @@
 { /* commnet */ }
 <JSX CODE>
 ```
+
+### Getting the theme without styled components
+
+* componentの外にまでthemeを渡したい
+* `withTheme`を使う
+* `export default withTheme(App);`のように
