@@ -23,8 +23,8 @@ const theme = {
 // ================================
 
 const Button2 = styled.button`
-  color: ${props => props.theme2.fg};
-  border: 2px solid ${props => props.theme2.fg};
+  color: ${props => props.theme.fg};
+  border: 2px solid ${props => props.theme.fg};
   background: ${props => props.theme.bg};
 
   font-size: 1em;
@@ -49,14 +49,16 @@ class App extends Component {
     return (
       <div className="App">
         <Button>Normal</Button>
-        <ThemeProvider theme={theme}> { /* props.theme.main = "mediumseagreen" */ }
+        { /* props.theme.main = "mediumseagreen" */}
+        <ThemeProvider theme={theme}>
           <Button>Themed</Button>
         </ThemeProvider>
         <br />
-        <ThemeProvider theme2={theme2}>
+        <ThemeProvider theme={theme2}>
           <div>
             <Button2>Default Theme</Button2>
-            <ThemeProvider theme2={invertTheme}> { /* theme2を貰った上で入れ替え */ }
+            { /* theme2を(themeとして)貰った上で入れ替え */}
+            <ThemeProvider theme={invertTheme}>
               <Button2>Inverted Theme</Button2>
             </ThemeProvider>
           </div>

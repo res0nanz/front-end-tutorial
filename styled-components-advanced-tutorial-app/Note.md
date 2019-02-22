@@ -14,3 +14,14 @@
 ### Error
 
 * `React.Children.only expected to receive a single React element child.`
+* JSX内に`{ /* コメント */ }`を書いた。書き方が原因
+* `<JSX CODE> { /* commnet */ }`はNG
+* コメントは別途、1行に書く
+
+```html
+// ダメな例
+<JSX CODE> { /* commnet */ }
+// 正しい例
+{ /* commnet */ }
+<JSX CODE>
+```
