@@ -32,3 +32,34 @@
 * componentの外にまでthemeを渡したい
 * `withTheme`を使う
 * `export default withTheme(App);`のように
+
+## Refs
+
+* styled-componentsVer4, ReactVer16
+* 以下の2つのうち1つを提供する
+  * 基礎となるDOMノード
+  * React components インスタンス
+* refsはReactのライフサイクルを無視して直接DOMを操作する
+
+```javascript
+<Input
+  ref={this.inputRef}
+  placeholder="Hover to focus!"
+  onMouseEnter={() => { // マウスホバーしたら
+      this.inputRef.current.focus()
+  }}
+/>
+```
+
+* `this.inputRef`は`<Input>`のcontructorでref変数として宣言
+* `ref={this.inputRef}`より、この`<Input>`にref変数を与える
+* `this.inputRef.current.focus()`より、`this.inputRef`をfocus
+* `this.inputRefをfocus` == `この<Input>のrefをfocus`
+* `この<Input>`をfocus
+* `ref={this.inputRef}`をなくすと、`null.focus()`になる
+
+## Security
+
+* CSS Injectionに気をつける
+* CSSをJavaScriptから守るCSS.escapeが決まりつつある
+* polyfill by Mathias Bynens を使うと良い
