@@ -63,3 +63,84 @@
 * CSS Injectionに気をつける
 * CSSをJavaScriptから守るCSS.escapeが決まりつつある
 * polyfill by Mathias Bynens を使うと良い
+
+## Existing CSS
+
+* 既存のCSSとstyled-componentsを使用するときの注意
+  * classNameを適用: `<div className={this.props.className} />`
+  * classNameを結合: `<div className={`some-global-class ${this.props.className}`} />`
+  * componentsのstyleが優先
+  * サードパーティ製スタイルスクリプト
+
+```javascript
+// .js
+const MyComponent = styled.div`background-color: green;`;
+// .css
+.red-bg {
+  background-color: red;
+}
+// greenのまま
+<MyComponent className="red-bg" />
+
+// 解決策
+.red-bg.red-bg {
+  background-color: red;
+}
+```
+
+## Media Templates
+
+* メディアクエリをテンプレ化
+* 使い回すことができる
+
+```javascript
+const sizes = {
+  desktop: 992,
+  tablet: 768,
+  phone: 576,
+}
+
+// Iterate through the sizes and create a media template
+const media = Object.keys(sizes).reduce((acc, label) => {
+  acc[label] = (...args) => css`
+    @media (max-width: ${sizes[label] / 16}em) {
+      ${css(...args)}
+    }
+  `
+
+  return acc
+}, {})
+
+const Content = styled.div`
+  height: 3em;
+  width: 3em;
+  background: papayawhip;
+
+  /* Now we have our methods on media and can use them instead of raw queries */
+  ${media.desktop`background: dodgerblue;`}
+  ${media.tablet`background: mediumseagreen;`}
+  ${media.phone`background: palevioletred;`}
+`;
+
+render(
+  <Content />
+);
+```
+
+## Tagged Template Literals
+
+* ES6で追加された新機能
+* styled-componentsが機能する立役者
+
+```javascript
+// 同じ
+fn`some string here`
+fn(['some string here'])
+```
+
+```javascript
+const aVar = 'good'
+// 同じ
+fn`this is a ${aVar} day`
+fn(['this is a ', ' day'], aVar) // splitされたもののあとに補間がくる
+```
