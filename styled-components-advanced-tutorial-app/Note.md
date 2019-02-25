@@ -144,3 +144,91 @@ const aVar = 'good'
 fn`this is a ${aVar} day`
 fn(['this is a ', ' day'], aVar) // splitされたもののあとに補間がくる
 ```
+
+## Server Side Rendering
+
+* StyleSheetのrehydrationを通してリアルタイムのSSRを実装
+* サーバーでアプリをrenderするたびに、ServerStyleSheetを作成し、Reactツリーに提供
+* context APIにより実現
+* keyframesやcreateGlobalStyleに関係なく、様々なReact DOMのSSR APIと共に使用可能
+* やり方はいくつか存在する（`babel-plugin-styled-components`が必要）
+  * `import { ServerStyleSheet } from 'styled-components'`する方法
+  * Next.js - [next.js/examples/with-styled-components at canary · zeit/next.js](https://github.com/zeit/next.js/tree/canary/examples/with-styled-components)
+  * ストリーミングレンダリング
+
+## Referring to other components
+
+* コンポーネントが作成or`styled()`でラップされたとき、そのコンポーネントは同時にターゲッティングのためのCSS classが付与される
+* 名前づけを考える手間が大幅に省ける
+* セレクタの衝突回避が見込める
+
+```javascript
+const Link = styled.a`
+  /*  */
+`;
+
+const Icon = styled.svg`
+  /*  */
+  ${Link}:hover & {
+    fill: rebeccapurple;
+  }
+`;
+
+const Label = styled.span`
+  /*  */
+`;
+
+render(
+  <Link href="#">
+    <Icon viewBox="0 0 20 20">
+      <path d="M10 15h8c1 0 2-1 2-2V3c0-1-1-2-2-2H2C1 1 0 2 0 3v10c0 1 1 2 2 2h4v4l4-4zM5 7h2v2H5V7zm4 0h2v2H9V7zm4 0h2v2h-2V7z"/>
+    </Icon>
+    <Label>Hovering my parent changes my style!</Label>
+  </Link>
+);
+```
+
+* LinkをhoverするとIconの色が変わる
+* `${Link}:hover & {fill: rebeccapurple;}`とIconスタイリング内に記述したため
+* `${Link}`とすることで、IconとLabel両方の領域をhover対象にできる
+* 上はstyled-components同士のみサポート
+
+```javascript
+class A extends React.Component {
+  render() {
+    return <div />
+  }
+}
+
+// うまくいかない。AがStyledComponentではないため
+const B = styled.div`
+  ${A} {
+  }
+`;
+
+// うまくいく
+const StyledA = styled(A)``
+const B = styled.div`
+  ${StyledA} {
+  }
+`;
+```
+
+## Styled Objects
+
+* CSSをstringで書く以外に、JavaScriptObjectとして書くこともできる
+
+```javascript
+const PropsBox = styled.div(props => ({
+  background: props.background,
+  height: '50px',
+  width: '50px'
+}));
+
+render(
+  <div>
+    <Box />
+    <PropsBox background="blue" />
+  </div>
+);
+```
