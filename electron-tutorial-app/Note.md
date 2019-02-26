@@ -21,3 +21,14 @@
 ## Installing Electron
 
 `npm install --save-dev electron`
+
+## Electron Development in a Nutshell
+
+* APIすべてを利用する: `const electron = require('electron')`
+* ライフサイクル管理: `electron.app`
+* ウィンドウ関連: `electron.BrowserWindow`
+
+## Running your app
+
+* 最低限`main.js, index.html, package.json`を作成
+* `npm start`

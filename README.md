@@ -15,3 +15,4 @@ Reactに関連するライブラリを学ぶリポジトリ
 * [Advanced Tutorial: Intro · Redux](https://redux.js.org/advanced/advanced-tutorial)
 * [styled-components: Basics](https://www.styled-components.com/docs/basics)
 * [styled-components: Advanced Usage](https://www.styled-components.com/docs/advanced)
+* [Writing Your First Electron App | Electron](https://electronjs.org/docs/tutorial/first-app)
